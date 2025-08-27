@@ -16,6 +16,8 @@ A web-based prompt engineering assistant that helps you iteratively test and ref
 
 ---
 
+![](screenshot.png)
+
 ## Features
 
 - Test any system + user prompt against multiple LLM backends (OpenAI, Anthropic).
