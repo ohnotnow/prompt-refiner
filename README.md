@@ -6,22 +6,13 @@ A web-based prompt engineering assistant that helps you iteratively test and ref
 
 ## Table of Contents
 
-- [Demo](#demo)  
 - [Features](#features)  
 - [Prerequisites](#prerequisites)  
 - [Installation](#installation)  
 - [Configuration](#configuration)  
 - [Usage](#usage)  
-- [Project Structure](#project-structure)  
 - [Contributing](#contributing)  
 - [License](#license)  
-
----
-
-## Demo
-
-![Prompt Refiner Screenshot](docs/screenshot.png)  
-*(Replace with an actual screenshot of the form and results pane.)*
 
 ---
 
@@ -48,19 +39,9 @@ A web-based prompt engineering assistant that helps you iteratively test and ref
 ## Installation
 
 ```bash
-# 1. Clone this repository
-git clone <repository-url>
+git clone https://github.com/ohnotnow/prompt-refiner.git
 cd prompt-refiner
-
-# 2. Install uv (if not already installed)
-#    (See https://docs.astral.sh/uv/getting-started/installation/)
-pip install uv-cli
-
-# 3. Sync dependencies & lock file
 uv sync
-
-# 4. (Optional) Verify dependencies
-uv check
 ```
 
 ---
@@ -91,29 +72,6 @@ Open that URL in your browser to begin testing and refining prompts.
 
 ---
 
-## Project Structure
-
-```
-.
-├── README.md                # This file
-├── main.py                  # FastHTML app & route handlers
-├── pyproject.toml           # Project metadata & dependencies
-├── uv.lock                  # uv-managed dependency lock file
-└── __pycache__/             # Python cache
-```
-
-- **main.py**  
-  - Sets up a FastHTML `app` and `rt` router.  
-  - Endpoints:
-    - `/` (GET) – Render the prompt/refine form.
-    - `/test` (POST) – Run `test_prompt()`, display LLM output & feedback form.
-    - `/refine` (POST) – Run `refine_prompt()`, generate & display a new system prompt.
-- **pyproject.toml**  
-  - Project name: `prompt-refiner`  
-  - Dependencies: `litellm`, `python-fasthtml`
-
----
-
 ## Contributing
 
 1. Fork the repository  
@@ -133,3 +91,4 @@ Please follow PEP 8 style guidelines and include docstrings for new functions.
 
 This project is licensed under the MIT License.  
 See [LICENSE](LICENSE) for details.
+
