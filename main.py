@@ -171,13 +171,11 @@ def get():
         Form(
             Fieldset(
                 Label("System Prompt:", 
-                    Textarea(name="system_prompt", rows=4, 
-                            placeholder="You are a helpful assistant...",
+                    Textarea("You are a helpful assistant", name="system_prompt", rows=4, 
                             style="width: 100%; font-family: monospace;")),
                 
                 Label("User Prompt:", 
-                    Textarea(name="user_prompt", rows=3,
-                            placeholder="Explain quantum computing...",
+                    Textarea("What is the capital of France?", name="user_prompt", rows=3,
                             style="width: 100%; font-family: monospace;")),
                 
                 Label("Model:",
@@ -186,7 +184,7 @@ def get():
                 
                 Label("Original Goal (what you're trying to achieve):",
                     Input(name="goal", type="text", 
-                         placeholder="Get clear, simple explanations with analogies",
+                         value="Get a single word response",
                          style="width: 100%;")),
                 
                 Button(Span("Test Prompt", cls="btn-text"), 
@@ -227,7 +225,6 @@ async def post(system_prompt: str, user_prompt: str, model: str, goal: str):
             H3("Not quite right? Refine it:"),
             Form(
                 Textarea(name="feedback", rows=3,
-                        placeholder="Too technical, needs more examples, wrong focus...",
                         style="width: 100%;"),
                 Hidden(name="current_system", value=system_prompt),
                 Hidden(name="last_response", value=response),
