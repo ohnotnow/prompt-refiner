@@ -247,9 +247,12 @@ async def post(system_prompt: str, user_prompt: str, model: str, goal: str):
             Details(
                 Summary("View History"),
                 *[Div(
-                    Strong(f"Iteration {i+1}:"),
-                    Pre(it["system_prompt"], style="background: #f9f9f9; padding: 0.5em;"),
-                    style="margin: 0.5em 0;"
+                    Strong(f"Iteration {i+1} ({it['model']}):"),
+                    H4("System Prompt:", style="margin: 0.5em 0 0.25em 0; font-size: 0.9em; color: #666;"),
+                    Pre(it["system_prompt"], style="background: #f9f9f9; padding: 0.5em; margin-bottom: 0.5em;"),
+                    H4("Response:", style="margin: 0.25em 0; font-size: 0.9em; color: #666;"),
+                    Pre(it["response"], style="background: #f0f8ff; padding: 0.5em; white-space: pre-wrap;"),
+                    style="margin: 1em 0; border-left: 3px solid #007bff; padding-left: 1em;"
                 ) for i, it in enumerate(iterations)]
             )
         )
