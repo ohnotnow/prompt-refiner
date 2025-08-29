@@ -6,6 +6,113 @@ from litellm import completion
 # Initialize FastHTML app
 app, rt = fast_app()
 
+# Add CSS styles for better UX
+css = Style("""
+/* Button styles */
+button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    position: relative;
+    overflow: hidden;
+}
+
+button:hover:not(:disabled) {
+    background: #0056b3;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+}
+
+/* Disabled button styles */
+button:disabled {
+    background: #6c757d !important;
+    cursor: not-allowed !important;
+    opacity: 0.6 !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Loading indicator styles */
+.htmx-request button {
+    background: #6c757d !important;
+    cursor: not-allowed !important;
+    opacity: 0.8 !important;
+}
+
+.htmx-request button::after {
+    content: "";
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    margin: auto;
+    border: 2px solid transparent;
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: spin 1s ease infinite;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+@keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Special styling for the green refine test button */
+button[style*="background: #4CAF50"]:disabled {
+    background: #6c757d !important;
+}
+
+/* Loading text for buttons */
+.htmx-request .btn-text {
+    opacity: 0;
+}
+
+/* Form styling improvements */
+textarea, input, select {
+    border: 2px solid #e1e5e9;
+    border-radius: 0.375rem;
+    padding: 0.5rem;
+    transition: border-color 0.2s ease-in-out;
+}
+
+textarea:focus, input:focus, select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+/* Results styling */
+pre {
+    border-radius: 0.375rem;
+    border: 1px solid #e1e5e9;
+}
+
+/* Loading indicator styling */
+.htmx-indicator {
+    background: linear-gradient(90deg, #f0f8ff, #e6f3ff);
+    border: 1px solid #007bff;
+    border-radius: 0.5rem;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.htmx-indicator span {
+    font-weight: 500;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+""")
+
 # Store iterations in memory (you could use a simple JSON file for persistence)
 iterations = []
 
@@ -60,7 +167,7 @@ Return ONLY the new system prompt, no explanation."""
 
 @rt("/")
 def get():
-    return Titled("Prompt Refinement Tool",
+    return Titled("Prompt Refinement Tool", css,
         Form(
             Fieldset(
                 Label("System Prompt:", 
@@ -82,12 +189,16 @@ def get():
                          placeholder="Get clear, simple explanations with analogies",
                          style="width: 100%;")),
                 
-                Button("Test Prompt", type="submit", hx_disabled_elt="this"),
+                Button(Span("Test Prompt", cls="btn-text"), 
+                      type="submit", hx_disabled_elt="this", 
+                      hx_indicator="#loading-test"),
             ),
             hx_post="/test",
             hx_target="#results",
             hx_swap="innerHTML"
         ),
+        Div(Span("🤖 Testing your prompt..."), 
+            id="loading-test", style="display: none; text-align: center; color: #007bff; padding: 1rem;"),
         Div(id="results"),
         Div(id="iterations")
     )
@@ -123,11 +234,15 @@ async def post(system_prompt: str, user_prompt: str, model: str, goal: str):
                 Hidden(name="user_prompt", value=user_prompt),
                 Hidden(name="model", value=model),
                 Hidden(name="goal", value=goal),
-                Button("Refine System Prompt", type="submit", hx_disabled_elt="this"),
+                Button(Span("🔄 Refine System Prompt", cls="btn-text"), 
+                      type="submit", hx_disabled_elt="this",
+                      hx_indicator="#loading-refine"),
                 hx_post="/refine",
                 hx_target="#refined",
                 hx_swap="innerHTML"
             ),
+            Div(Span("🧠 Refining your prompt..."),
+                id="loading-refine", style="display: none; text-align: center; color: #007bff; padding: 1rem;"),
             Div(id="refined"),
             
             # Show iteration history
@@ -163,8 +278,9 @@ async def post(feedback: str, current_system: str, last_response: str,
                 Hidden(name="user_prompt", value=user_prompt),
                 Hidden(name="model", value=model),
                 Hidden(name="goal", value=goal),
-                Button("Test Refined Prompt", type="submit", 
-                      style="background: #4CAF50; color: white; padding: 0.5em 1em;", hx_disabled_elt="this"),
+                Button(Span("✨ Test Refined Prompt", cls="btn-text"), 
+                      type="submit", hx_disabled_elt="this",
+                      style="background: #4CAF50;"),
                 hx_post="/test",
                 hx_target="#results",
                 hx_swap="innerHTML"
